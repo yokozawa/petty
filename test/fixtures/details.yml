@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  user_id_id: 
+  amount: 1
+  desc: MyText
+  type_id: 
+  meta_id: 
+  deleted: false
+  timestamps: MyString
+
+two:
+  user_id_id: 
+  amount: 1
+  desc: MyText
+  type_id: 
+  meta_id: 
+  deleted: false
+  timestamps: MyString

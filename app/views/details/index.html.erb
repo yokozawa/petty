@@ -1,0 +1,6 @@
+<h1>Details</h1>
+<ul>
+  <% @details.each do |detail| %>
+  <li>￥<%= detail.amount %> (<%= detail.desc %>)</li>
+  <% end %>
+</ul>
