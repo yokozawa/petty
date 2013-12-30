@@ -1,7 +1,7 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
 
 one:
-  user_id_id: 
+  user_id: 
   amount: 1
   desc: MyText
   type_id: 
@@ -10,7 +10,7 @@ one:
   timestamps: MyString
 
 two:
-  user_id_id: 
+  user_id: 
   amount: 1
   desc: MyText
   type_id: 

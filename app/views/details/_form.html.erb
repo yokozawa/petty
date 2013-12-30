@@ -1,0 +1,7 @@
+<%= form_for @detail do |f| %>
+  <p><%= f.label :desc %>:<%= f.text_field :desc %></p>
+    <% if @detail.errors.any? %>
+    <p class="error"><%= @detail.errors.messages[:desc][0] %><p>
+    <% end %>
+  <p><%= f.submit %></p>
+<% end %>

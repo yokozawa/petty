@@ -1,6 +1,13 @@
 <h1>Details</h1>
 <ul>
   <% @details.each do |detail| %>
-  <li>￥<%= detail.amount %> (<%= detail.desc %>)</li>
+  <li>
+    <%= link_to detail.id, detail_path(detail.id) %>&nbsp;
+    ￥<%= detail.amount %> (<%= detail.desc %>)
+    <%= link_to "[edit]", edit_detail_path(detail.id) %>
+    <%= link_to "[delete]", detail_path(detail.id), method: :delete, data:{confirm: "are you sure?"}  %>
+  </li>
   <% end %>
 </ul>
+
+<p><%= link_to "Add New", new_detail_path %></p>
