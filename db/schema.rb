@@ -11,22 +11,44 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131230070643) do
+ActiveRecord::Schema.define(version: 20131230082655) do
 
   create_table "details", force: true do |t|
     t.integer  "user_id"
     t.integer  "amount"
     t.text     "desc"
     t.integer  "type_id"
-    t.integer  "meta_id"
+    t.integer  "outline_id"
     t.boolean  "deleted"
     t.string   "timestamps"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "details", ["meta_id"], name: "index_details_on_meta_id"
+  add_index "details", ["outline_id"], name: "index_details_on_outline_id"
   add_index "details", ["type_id"], name: "index_details_on_type_id"
   add_index "details", ["user_id"], name: "index_details_on_user_id"
+
+  create_table "outlines", force: true do |t|
+    t.integer  "user_id"
+    t.text     "label"
+    t.boolean  "deleted"
+    t.string   "timestamps"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "outlines", ["user_id"], name: "index_outlines_on_user_id"
+
+  create_table "types", force: true do |t|
+    t.integer  "user_id"
+    t.text     "label"
+    t.boolean  "deleted"
+    t.string   "timestamps"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "types", ["user_id"], name: "index_types_on_user_id"
 
 end

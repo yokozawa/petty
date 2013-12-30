@@ -1,0 +1,12 @@
+<h1>types</h1>
+<ul>
+  <% @types.each do |type| %>
+  <li>
+    <%= type.label %>
+    <%= link_to "[edit]", edit_type_path(type.id) %>
+    <%= link_to "[delete]", type_path(type.id), method: :delete, data:{confirm: "are you sure?"}  %>
+  </li>
+  <% end %>
+</ul>
+
+<p><%= link_to "Add New", new_type_path %></p>

@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  user_id: 
+  label: MyText
+  deleted: false
+  timestamps: MyString
+
+two:
+  user_id: 
+  label: MyText
+  deleted: false
+  timestamps: MyString

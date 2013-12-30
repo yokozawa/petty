@@ -3,7 +3,9 @@
   <% @details.each do |detail| %>
   <li>
     <%= link_to detail.id, detail_path(detail.id) %>&nbsp;
-    ￥<%= detail.amount %> (<%= detail.desc %>)
+    ￥<%= detail.amount %> (<%= detail.desc %>) 
+    <%= detail.type.nil? ?  "un-selected" : detail.type.label %>
+    <%= detail.outline.nil? ?  "un-selected" : detail.outline.label %>
     <%= link_to "[edit]", edit_detail_path(detail.id) %>
     <%= link_to "[delete]", detail_path(detail.id), method: :delete, data:{confirm: "are you sure?"}  %>
   </li>
@@ -11,3 +13,6 @@
 </ul>
 
 <p><%= link_to "Add New", new_detail_path %></p>
+
+<p><%= link_to "type setting", types_path %></p>
+<p><%= link_to "outline setting", outlines_path %></p>

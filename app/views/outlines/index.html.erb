@@ -1,0 +1,12 @@
+<h1>outlines</h1>
+<ul>
+  <% @outlines.each do |outline| %>
+  <li>
+    <%= outline.label %>
+    <%= link_to "[edit]", edit_outline_path(outline.id) %>
+    <%= link_to "[delete]", outline_path(outline.id), method: :delete, data:{confirm: "are you sure?"}  %>
+  </li>
+  <% end %>
+</ul>
+
+<p><%= link_to "Add New", new_outline_path %></p>
