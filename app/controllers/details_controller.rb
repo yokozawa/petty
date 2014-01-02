@@ -40,7 +40,7 @@ class DetailsController < ApplicationController
 
   private
     def detail_params
-      params[:detail].permit(:desc, :amount, :type_id, :outline_id)
+      params[:detail].permit(:record_at, :desc, :sign, :amount, :type_id, :outline_id)
     end
 
     def set_detail

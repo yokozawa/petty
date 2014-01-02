@@ -1,0 +1,28 @@
+<h1>summary</h1>
+
+<% today = Date.today %>
+<% first_day = Date.new(today.year, today.month, 1) %>
+
+<%= link_to "◀", :url => {:action => 'summary', :y => first_day.last_month.year , :m => first_day.last_month.month} %>
+<%= first_day.year -%>年<%= first_day.month %>月
+
+<% xdate = first_day %>
+<table>
+  <tr>
+    <th>日付</th>
+    <% @types.each do |type| %>
+    <th><%= type.label %></th>
+    <% end %>
+  </tr>
+  <% while ((xdate < first_day) or (xdate.month == first_day.month)) do %>
+  <tr>
+    <td>
+      <%= xdate.year %>/<%= xdate.month %>/<%= xdate.day %>
+    </td>
+    <% xdate += 1 %>
+  </tr>
+  <% end %>
+</table>
+
+
+

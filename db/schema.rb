@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131230082655) do
+ActiveRecord::Schema.define(version: 20140102003112) do
 
   create_table "details", force: true do |t|
     t.integer  "user_id"
@@ -23,6 +23,8 @@ ActiveRecord::Schema.define(version: 20131230082655) do
     t.string   "timestamps"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "record_at"
+    t.boolean  "sign"
   end
 
   add_index "details", ["outline_id"], name: "index_details_on_outline_id"
