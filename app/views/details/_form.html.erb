@@ -2,7 +2,13 @@
   <p><%= f.date_select :record_at, :use_month_numbers => true %></p>
   <p><%= select :detail, :sign, {"+" => 0, "-" => 1}, :selected => 1 %></p>
   <p><%= f.label :amount %>:<%= f.number_field :amount %></p>
+    <% if @detail.errors.any? %>
+      <p class="error"><%= @detail.errors.messages[:amount][0] %></p>
+    <% end %>
   <p><%= f.label :type %>:<%= f.collection_select :type_id, Type.all, :id, :label, :include_blank => true %></p>
+    <% if @detail.errors.any? %>
+      <p class="error"><%= @detail.errors.messages[:type][0] %></p>
+    <% end %>
   <p><%= f.label :outline %>:<%= f.collection_select :outline_id, Outline.all, :id, :label, :include_blank => true %></p>
   <p><%= f.label :desc %>:<%= f.text_field :desc %></p>
     <% if @detail.errors.any? %>

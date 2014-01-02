@@ -27,9 +27,9 @@ ActiveRecord::Schema.define(version: 20140102003112) do
     t.boolean  "sign"
   end
 
-  add_index "details", ["outline_id"], name: "index_details_on_outline_id"
-  add_index "details", ["type_id"], name: "index_details_on_type_id"
-  add_index "details", ["user_id"], name: "index_details_on_user_id"
+  add_index "details", ["outline_id"], name: "index_details_on_outline_id", using: :btree
+  add_index "details", ["type_id"], name: "index_details_on_type_id", using: :btree
+  add_index "details", ["user_id"], name: "index_details_on_user_id", using: :btree
 
   create_table "outlines", force: true do |t|
     t.integer  "user_id"
@@ -40,7 +40,7 @@ ActiveRecord::Schema.define(version: 20140102003112) do
     t.datetime "updated_at"
   end
 
-  add_index "outlines", ["user_id"], name: "index_outlines_on_user_id"
+  add_index "outlines", ["user_id"], name: "index_outlines_on_user_id", using: :btree
 
   create_table "types", force: true do |t|
     t.integer  "user_id"
@@ -51,6 +51,6 @@ ActiveRecord::Schema.define(version: 20140102003112) do
     t.datetime "updated_at"
   end
 
-  add_index "types", ["user_id"], name: "index_types_on_user_id"
+  add_index "types", ["user_id"], name: "index_types_on_user_id", using: :btree
 
 end

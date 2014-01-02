@@ -3,5 +3,6 @@ class Detail < ActiveRecord::Base
   belongs_to :type
   belongs_to :outline
 
-  validates :desc, presence: true
+  validates :type, presence: true
+  validates :amount, presence: true
 end

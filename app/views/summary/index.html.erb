@@ -14,11 +14,22 @@
     <th><%= type.label %></th>
     <% end %>
   </tr>
+  <% i = 0 %>
   <% while ((xdate < first_day) or (xdate.month == first_day.month)) do %>
   <tr>
     <td>
       <%= xdate.year %>/<%= xdate.month %>/<%= xdate.day %>
     </td>
+    <% if @recs[i] %>
+      <% while (@recs[i]['record_date'] == xdate.to_s) do %>
+        <% @types.each do |type| %>
+          <% if @recs[i]['type_id'] == type.id %>
+            <td><%= @recs[i] %></td>
+            <% i += 1 %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
     <% xdate += 1 %>
   </tr>
   <% end %>
