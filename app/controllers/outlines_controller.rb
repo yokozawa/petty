@@ -4,7 +4,7 @@ class OutlinesController < ApplicationController
   before_filter :authenticate_user!
 
   def index
-    @outlines = Outline.all
+    @outlines = Outline.where(:user_id => current_user.id).all
   end
 
   def new
@@ -13,7 +13,7 @@ class OutlinesController < ApplicationController
 
   def create
     @outline = Outline.new(outline_params)
-    @detail.user_id = current_user.id
+    @outline.user_id = current_user.id
     if @outline.save
       redirect_to outlines_path
     else

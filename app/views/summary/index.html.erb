@@ -19,7 +19,10 @@
     <th>日付</th>
     <th>収入</th>
     <% @types.each do |type| %>
-      <th><%= type.label %></th>
+      <th>
+        <%= type.label %>
+        <%= sprintf("(%s日締翌月%s日払)", type.cutoff_day == GETSUMATSU ? '月末' : type.cutoff_day, type.payment_day) if type.is_card %>
+      </th>
     <% end %>
   </tr>
   <% i = 0 %>

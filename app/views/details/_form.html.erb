@@ -5,11 +5,11 @@
     <% if @detail.errors.any? %>
       <p class="error"><%= @detail.errors.messages[:amount][0] %></p>
     <% end %>
-  <p><%= f.label :type %>:<%= f.collection_select :type_id, Type.all, :id, :label, :include_blank => true %></p>
+  <p><%= f.label :type %>:<%= f.collection_select :type_id, Type.where(:user_id => current_user.id).all, :id, :label, :include_blank => true %></p>
     <% if @detail.errors.any? %>
       <p class="error"><%= @detail.errors.messages[:type][0] %></p>
     <% end %>
-  <p><%= f.label :outline %>:<%= f.collection_select :outline_id, Outline.all, :id, :label, :include_blank => true %></p>
+  <p><%= f.label :outline %>:<%= f.collection_select :outline_id, Outline.where(:user_id => current_user.id).all, :id, :label, :include_blank => true %></p>
   <p><%= f.label :desc %>:<%= f.text_field :desc %></p>
     <% if @detail.errors.any? %>
       <p class="error"><%= @detail.errors.messages[:desc][0] %></p>

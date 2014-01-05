@@ -4,7 +4,7 @@ class TypesController < ApplicationController
   before_filter :authenticate_user!
 
   def index
-    @types = Type.all
+    @types = Type.where(:user_id => current_user.id).all
   end
 
   def new
@@ -13,7 +13,7 @@ class TypesController < ApplicationController
 
   def create
     @type = Type.new(type_params)
-    @detail.user_id = current_user.id
+    @type.user_id = current_user.id
     if @type.save
       redirect_to types_path
     else
