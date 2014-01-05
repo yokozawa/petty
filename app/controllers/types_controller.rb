@@ -1,6 +1,7 @@
 class TypesController < ApplicationController
 
   before_action :set_type, only:[:edit, :update, :destroy]
+  before_filter :authenticate_user!
 
   def index
     @types = Type.all
@@ -12,6 +13,7 @@ class TypesController < ApplicationController
 
   def create
     @type = Type.new(type_params)
+    @detail.user_id = current_user.id
     if @type.save
       redirect_to types_path
     else

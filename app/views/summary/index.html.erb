@@ -1,10 +1,17 @@
 <h1>summary</h1>
 
+<div class="summary_header">
+現金収入：<%= @income_cash %><br />
+現金支出：<%= @outgo_cash %><br />
+現金残高：<%= @income_cash - @outgo_cash - 11 %><br />
+</div>
+
+<div class="calendar_haeder">
 <% today = Date.today %>
 <% first_day = Date.new(today.year, today.month, 1) %>
-
 <%= link_to "◀", :url => {:action => 'summary', :y => first_day.last_month.year , :m => first_day.last_month.month} %>
 <%= first_day.year -%>年<%= first_day.month %>月
+</div>
 
 <% i = 0 %>
 <% xdate = first_day %>
@@ -25,7 +32,7 @@
       <td>
         <% sum = 0 %>
         <% @types.each do |type| %>
-          <% name = sprintf("@recs_%d_%d", type.id, 0) %>
+          <% name = sprintf("@recs_%d_%d", type.id, INCOME) %>
           <% @recs = eval("#{name}") %>
           <% if @recs[i]['amount'] %><% sum += @recs[i]['amount'] %><% end %>
         <% end %>
@@ -33,7 +40,7 @@
       </td>
       <% @types.each do |type| %>
         <td>
-          <% name = sprintf("@recs_%d_%d", type.id, 1) %>
+          <% name = sprintf("@recs_%d_%d", type.id, OUTGO) %>
           <% @recs = eval("#{name}") %>
           <% if @recs[i]['amount'] %>
             -<%= @recs[i]['amount'] %><br />
@@ -49,11 +56,15 @@
     <td>合計</td>
     <td>+<%= @income_sum %></td>
     <% @types.each do |type| %>
-      <% name = sprintf("@outcome_sum_%d", type.id) %>
+      <% name = sprintf("@outgo_sum_%d", type.id) %>
       <td>-<%= eval("#{name}") %></td>
     <% end %>
   </tr>
 </table>
 
+<div class="summary_footer">
+  <% name = sprintf("@outgo_sum_%d", @types.first.id) %>
+  月末残高：<%= @income_sum - eval("#{name}") %>
+</div>
 
 

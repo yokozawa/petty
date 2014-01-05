@@ -1,6 +1,7 @@
 class DetailsController < ApplicationController
  
   before_action :set_detail, only:[:show, :edit, :update, :destroy]
+  before_filter :authenticate_user!
 
   def index
     @details = Detail.order('record_at asc').all
@@ -15,6 +16,7 @@ class DetailsController < ApplicationController
 
   def create
     @detail = Detail.new(detail_params)
+    @detail.user_id = current_user.id
     if @detail.save
       redirect_to details_path
     else
@@ -40,7 +42,7 @@ class DetailsController < ApplicationController
 
   private
   def detail_params
-    params[:detail].permit(:record_at, :desc, :sign, :amount, :type_id, :outline_id)
+    params[:detail].permit(:user_id, :record_at, :desc, :sign, :amount, :type_id, :outline_id)
   end
 
   def set_detail

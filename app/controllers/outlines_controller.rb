@@ -1,6 +1,7 @@
 class OutlinesController < ApplicationController
 
   before_action :set_outline, only:[:edit, :update, :destroy]
+  before_filter :authenticate_user!
 
   def index
     @outlines = Outline.all
@@ -12,6 +13,7 @@ class OutlinesController < ApplicationController
 
   def create
     @outline = Outline.new(outline_params)
+    @detail.user_id = current_user.id
     if @outline.save
       redirect_to outlines_path
     else

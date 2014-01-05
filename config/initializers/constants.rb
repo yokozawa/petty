@@ -1,0 +1,2 @@
+INCOME=0
+OUTGO=1

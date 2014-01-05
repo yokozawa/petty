@@ -6,20 +6,31 @@ class Detail < ActiveRecord::Base
   validates :type, presence: true
   validates :amount, presence: true
 
-  def self.get_records_by_filter(type_id = false, sign = 1, date = false)
+  def self.get_current_year_month
+    today = Date.today
+    date = sprintf("%04d-%02d", today.year, today.month)
+  end
+
+  def self.get_records_by_filter(type_id = false, sign = OUTGO, date = false)
     if !type_id
       return false
     end
     if !date
-      today = Date.today
-      date = sprintf("%04d-%02d", today.year, today.month)
+      date = get_current_year_month
     end
+    return self.find_by_sql([_sql_for_records_by_filter, date, type_id, sign])
+  end
 
-    return self.find_by_sql([_create_sql, date, type_id, sign])
+  def self.get_current_income(user_id = false, date = false)
+    return self.find_by_sql([_sql_for_current_amount, user_id, get_current_year_month, INCOME, user_id])
+  end
+  
+  def self.get_current_outgo(user_id = false, date = false)
+    return self.find_by_sql([_sql_for_current_amount, user_id, get_current_year_month, OUTGO, user_id])
   end
 
   private
-  def self._create_sql
+  def self._sql_for_records_by_filter
     sql = "
 	SELECT ADDDATE(DATE(DATE_FORMAT(NOW(), '%y-%m-01')), n.count) date
 	       ,d.type_id
@@ -43,5 +54,18 @@ class Detail < ActiveRecord::Base
 	 ORDER BY n.count ASC
     "
   end
+
+  def self._sql_for_current_amount
+    sql = "
+      SELECT SUM(d.amount) amount
+        FROM details d
+       WHERE d.user_id = ?
+         AND DATE_FORMAT(d.record_at, '%Y-%m') = ?
+         AND d.record_at <= now()
+         AND d.sign = ?
+         AND d.type_id = (select min(id) from types where user_id = ?)
+    "
+  end 
+
 
 end
