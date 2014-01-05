@@ -20,14 +20,14 @@ class SummaryController < ApplicationController
     @income_sum = 0
     @types.each do |type|
       name = sprintf("@recs_%d_%d", type.id, INCOME)
-      @recs = Detail.get_records_by_filter(type.id, INCOME, date)
+      @recs = Detail.get_records_by_filter(current_user.id, type.id, INCOME, date)
       eval("#{name} = @recs")
       @recs.each do |rec|
         @income_sum += rec['amount'] ? rec['amount'] : 0 
       end
 
       name = sprintf("@recs_%d_%d", type.id, OUTGO)
-      @recs = Detail.get_records_by_filter(type.id, OUTGO, date)
+      @recs = Detail.get_records_by_filter(current_user.id, type.id, OUTGO, date)
       eval("#{name} = @recs")
       sum = 0
       @recs.each do |rec|

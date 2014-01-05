@@ -4,7 +4,7 @@ class DetailsController < ApplicationController
   before_filter :authenticate_user!
 
   def index
-    @details = Detail.order('record_at asc').all
+    @details = Detail.where(:user_id => current_user.id).order('record_at asc').all
   end
 
   def show

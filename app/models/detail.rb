@@ -13,11 +13,11 @@ class Detail < ActiveRecord::Base
     date = sprintf("%04d-%02d", today.year, today.month)
   end
 
-  def self.get_records_by_filter(type_id = false, sign = OUTGO, date = false)
-    return false if !type_id
+  def self.get_records_by_filter(user_id = false, type_id = false, sign = OUTGO, date = false)
+    return false if !type_id or !user_id
     date = get_current_year_month if !date
     first_day = sprintf("%s-01", date)
-    return self.find_by_sql([_sql_for_records_by_filter, first_day, date, type_id, sign, first_day, first_day])
+    return self.find_by_sql([_sql_for_records_by_filter, first_day, user_id, date, type_id, sign, first_day, first_day])
   end
 
   def self.get_current_income(user_id = false, date = false)
@@ -79,7 +79,8 @@ class Detail < ActiveRecord::Base
 	             ,d.sign sign
 	             ,sum(d.amount) amount
 	        FROM details d
-	       WHERE DATE_FORMAT(d.record_at, '%Y-%m') = ?
+	       WHERE d.user_id = ?
+             AND DATE_FORMAT(d.record_at, '%Y-%m') = ?
 	         AND d.type_id = ?
 	         AND d.sign = ?
 	       GROUP BY DATE_FORMAT(d.record_at, '%Y/%m/%d'), d.type_id, d.sign
