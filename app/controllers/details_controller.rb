@@ -3,7 +3,7 @@ class DetailsController < ApplicationController
   before_action :set_detail, only:[:show, :edit, :update, :destroy]
 
   def index
-    @details = Detail.all
+    @details = Detail.order('record_at asc').all
   end
 
   def show
@@ -39,12 +39,12 @@ class DetailsController < ApplicationController
   end
 
   private
-    def detail_params
-      params[:detail].permit(:record_at, :desc, :sign, :amount, :type_id, :outline_id)
-    end
+  def detail_params
+    params[:detail].permit(:record_at, :desc, :sign, :amount, :type_id, :outline_id)
+  end
 
-    def set_detail
-      @detail = Detail.find(params[:id])
-    end
+  def set_detail
+    @detail = Detail.find(params[:id])
+  end
 
 end

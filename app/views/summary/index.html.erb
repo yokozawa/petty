@@ -6,33 +6,53 @@
 <%= link_to "◀", :url => {:action => 'summary', :y => first_day.last_month.year , :m => first_day.last_month.month} %>
 <%= first_day.year -%>年<%= first_day.month %>月
 
+<% i = 0 %>
 <% xdate = first_day %>
-<table>
+<table border="1">
   <tr>
     <th>日付</th>
+    <th>収入</th>
     <% @types.each do |type| %>
-    <th><%= type.label %></th>
+      <th><%= type.label %></th>
     <% end %>
   </tr>
   <% i = 0 %>
   <% while ((xdate < first_day) or (xdate.month == first_day.month)) do %>
-  <tr>
-    <td>
-      <%= xdate.year %>/<%= xdate.month %>/<%= xdate.day %>
-    </td>
-    <% if @recs[i] %>
-      <% while (@recs[i]['record_date'] == xdate.to_s) do %>
+    <tr>
+      <td>
+        <%= xdate.year %>/<%= xdate.month %>/<%= xdate.day %>
+      </td>
+      <td>
+        <% sum = 0 %>
         <% @types.each do |type| %>
-          <% if @recs[i]['type_id'] == type.id %>
-            <td><%= @recs[i] %></td>
-            <% i += 1 %>
-          <% end %>
+          <% name = sprintf("@recs_%d_%d", type.id, 0) %>
+          <% @recs = eval("#{name}") %>
+          <% if @recs[i]['amount'] %><% sum += @recs[i]['amount'] %><% end %>
         <% end %>
+        <% if sum > 0 %>+<%= sum %><br /><% end %>
+      </td>
+      <% @types.each do |type| %>
+        <td>
+          <% name = sprintf("@recs_%d_%d", type.id, 1) %>
+          <% @recs = eval("#{name}") %>
+          <% if @recs[i]['amount'] %>
+            -<%= @recs[i]['amount'] %><br />
+          <% end %>
+        </td>
       <% end %>
-    <% end %>
+    </tr>
+    <% i += 1 %>
     <% xdate += 1 %>
-  </tr>
   <% end %>
+
+  <tr>
+    <td>合計</td>
+    <td>+<%= @income_sum %></td>
+    <% @types.each do |type| %>
+      <% name = sprintf("@outcome_sum_%d", type.id) %>
+      <td>-<%= eval("#{name}") %></td>
+    <% end %>
+  </tr>
 </table>
 
 
