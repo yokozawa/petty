@@ -38,10 +38,10 @@ class Detail < ActiveRecord::Base
     return if !type.is_card
 
     today = Date.today
-    date = sprintf("%04d-%02d-%02d", today.next_month.year, today.next_month.month, type.payment_day)
-    rec = Detail.find_by_sql([_sql_for_card_record, self.user_id, type.id, date]).first
+    payment_date = sprintf("%04d-%02d-%02d", today.next_month.year, today.next_month.month, type.payment_day)
+    rec = Detail.find_by_sql([_sql_for_card_record, self.user_id, type.id, payment_date]).first
 
-    if type.cutoff_day == 31
+    if type.cutoff_day == GETSUMATSU
       cutoff_date = sprintf("%04d-%02d-%02d", today.next_month.year, today.next_month.month, -1)
     else 
       cutoff_date = sprintf("%04d-%02d-%02d", today.year, today.month, type.cutoff_day)
@@ -57,7 +57,7 @@ class Detail < ActiveRecord::Base
         :type_id => 1,
         :created_by => type.id,
         :amount => summary.amount,
-        :record_at => date,
+        :record_at => payment_date,
         :sign => OUTGO,
         :desc => sprintf("%s", type.label)
       )
@@ -120,7 +120,7 @@ class Detail < ActiveRecord::Base
        WHERE d.user_id = ?
          AND d.type_id = ?
          AND d.record_at <= DATE_FORMAT(?, '%Y-%m-%d')
-         AND d.record_at > (DATE_FORMAT(?, '%Y-%m-%d') - INTERVAL 1 MONTH)
+         AND d.record_at >= (DATE_FORMAT(?, '%Y-%m-%d') - INTERVAL 1 MONTH)
     "
   end
 end
