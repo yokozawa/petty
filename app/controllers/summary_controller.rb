@@ -5,20 +5,29 @@ class SummaryController < ApplicationController
   def index
     @types = Type.all;
 
-    @income_cash = Detail.get_current_income(current_user.id).first.amount
-    @outgo_cash = Detail.get_current_outgo(current_user.id).first.amount
+    if params[:y] and params[:m]
+      date = sprintf("%04d-%02d", params[:y], params[:m])
+      @first_day = Date.parse(sprintf("%s-01", date))
+    else 
+      today = Date.today
+      date = sprintf("%04d-%02d", today.year, today.month)
+      @first_day = Date.new(today.year, today.month, 1)
+    end
+
+    @income_cash = Detail.get_current_income(current_user.id, date).first.amount
+    @outgo_cash = Detail.get_current_outgo(current_user.id, date).first.amount
 
     @income_sum = 0
     @types.each do |type|
       name = sprintf("@recs_%d_%d", type.id, INCOME)
-      @recs = Detail.get_records_by_filter(type.id, INCOME)
+      @recs = Detail.get_records_by_filter(type.id, INCOME, date)
       eval("#{name} = @recs")
       @recs.each do |rec|
         @income_sum += rec['amount'] ? rec['amount'] : 0 
       end
 
       name = sprintf("@recs_%d_%d", type.id, OUTGO)
-      @recs = Detail.get_records_by_filter(type.id, OUTGO)
+      @recs = Detail.get_records_by_filter(type.id, OUTGO, date)
       eval("#{name} = @recs")
       sum = 0
       @recs.each do |rec|

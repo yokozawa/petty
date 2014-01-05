@@ -6,33 +6,69 @@ class Detail < ActiveRecord::Base
   validates :type, presence: true
   validates :amount, presence: true
 
+  after_save :_calc_card_amount
+
   def self.get_current_year_month
     today = Date.today
     date = sprintf("%04d-%02d", today.year, today.month)
   end
 
   def self.get_records_by_filter(type_id = false, sign = OUTGO, date = false)
-    if !type_id
-      return false
-    end
-    if !date
-      date = get_current_year_month
-    end
-    return self.find_by_sql([_sql_for_records_by_filter, date, type_id, sign])
+    return false if !type_id
+    date = get_current_year_month if !date
+    first_day = sprintf("%s-01", date)
+    return self.find_by_sql([_sql_for_records_by_filter, first_day, date, type_id, sign, first_day, first_day])
   end
 
   def self.get_current_income(user_id = false, date = false)
-    return self.find_by_sql([_sql_for_current_amount, user_id, get_current_year_month, INCOME, user_id])
+    date = get_current_year_month if !date
+    return self.find_by_sql([_sql_for_current_amount, user_id, date, INCOME, user_id])
   end
   
   def self.get_current_outgo(user_id = false, date = false)
-    return self.find_by_sql([_sql_for_current_amount, user_id, get_current_year_month, OUTGO, user_id])
+    date = get_current_year_month if !date
+    return self.find_by_sql([_sql_for_current_amount, user_id, date, OUTGO, user_id])
+  end
+
+  def _calc_card_amount
+    type = Detail.find_by_sql(["
+      SELECT t.*
+        FROM types t
+       WHERE id= ?", self.type_id]).first
+    return if !type.is_card
+
+    today = Date.today
+    date = sprintf("%04d-%02d-%02d", today.next_month.year, today.next_month.month, type.payment_day)
+    rec = Detail.find_by_sql([_sql_for_card_record, self.user_id, type.id, date]).first
+
+    if type.cutoff_day == 31
+      cutoff_date = sprintf("%04d-%02d-%02d", today.next_month.year, today.next_month.month, -1)
+    else 
+      cutoff_date = sprintf("%04d-%02d-%02d", today.year, today.month, type.cutoff_day)
+    end
+    summary = Detail.find_by_sql([_sql_for_card_summary, self.user_id, type.id, cutoff_date, cutoff_date]).first 
+
+    if rec != nil
+      rec.amount = summary.amount
+      rec.save
+    else
+      detail = Detail.new(
+        :user_id => self.user_id,
+        :type_id => 1,
+        :created_by => type.id,
+        :amount => summary.amount,
+        :record_at => date,
+        :sign => OUTGO,
+        :desc => sprintf("%s", type.label)
+      )
+      detail.save
+    end
   end
 
   private
   def self._sql_for_records_by_filter
     sql = "
-	SELECT ADDDATE(DATE(DATE_FORMAT(NOW(), '%y-%m-01')), n.count) date
+	SELECT ADDDATE(DATE(DATE_FORMAT(?, '%Y-%m-01')), n.count) date
 	       ,d.type_id
 	       ,d.sign
 	       ,d.amount
@@ -49,8 +85,8 @@ class Detail < ActiveRecord::Base
 	       GROUP BY DATE_FORMAT(d.record_at, '%Y/%m/%d'), d.type_id, d.sign
 	       ORDER BY 1 ASC
 	  ) d
-	    ON ADDDATE(DATE(DATE_FORMAT(NOW(), '%y-%m-01')), n.count) = d.record_date
-	 WHERE n.count <= DAYOFMONTH((DATE(DATE_FORMAT(CURRENT_DATE(), '%y-%m-01')) + INTERVAL 1 MONTH) - INTERVAL 1 DAY)
+	    ON ADDDATE(DATE(DATE_FORMAT(?, '%Y-%m-01')), n.count) = d.record_date
+	 WHERE n.count <= DAYOFMONTH((DATE(DATE_FORMAT(?, '%Y-%m-01')) + INTERVAL 1 MONTH) - INTERVAL 1 DAY)
 	 ORDER BY n.count ASC
     "
   end
@@ -67,5 +103,24 @@ class Detail < ActiveRecord::Base
     "
   end 
 
+  def _sql_for_card_record
+    sql = "
+      SELECT d.*
+        FROM details d
+       WHERE user_id = ?
+         AND created_by = ?
+         AND DATE_FORMAT(d.record_at, '%Y-%m-%d') = ?
+    "
+  end
 
+  def _sql_for_card_summary
+    sql = "
+      SELECT sum(d.amount) amount
+        FROM details d
+       WHERE d.user_id = ?
+         AND d.type_id = ?
+         AND d.record_at <= DATE_FORMAT(?, '%Y-%m-%d')
+         AND d.record_at > (DATE_FORMAT(?, '%Y-%m-%d') - INTERVAL 1 MONTH)
+    "
+  end
 end
