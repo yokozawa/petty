@@ -4,7 +4,7 @@ class OutlinesController < ApplicationController
   before_filter :authenticate_user!
 
   def index
-    @outlines = Outline.where(:user_id => current_user.id).all
+    @outlines = current_user.outlines.all
   end
 
   def new

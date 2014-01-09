@@ -4,7 +4,7 @@ class TypesController < ApplicationController
   before_filter :authenticate_user!
 
   def index
-    @types = Type.where(:user_id => current_user.id).all
+    @types = current_user.types.all
   end
 
   def new
