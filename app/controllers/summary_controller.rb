@@ -5,7 +5,6 @@ class SummaryController < ApplicationController
   def index
     @types = current_user.types
 
-
     if params[:y] and params[:m]
       date = sprintf("%04d-%02d", params[:y], params[:m])
       @first_day = Date.parse(sprintf("%s-01", date))
