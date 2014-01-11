@@ -3,7 +3,7 @@ class SummaryController < ApplicationController
   before_filter :authenticate_user!
 
   def index
-    @types = Type.where(:user_id => current_user.id).all;
+    @types = current_user.types
 
     if params[:y] and params[:m]
       date = sprintf("%04d-%02d", params[:y], params[:m])
