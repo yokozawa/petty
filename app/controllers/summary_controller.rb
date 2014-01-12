@@ -11,7 +11,7 @@ class SummaryController < ApplicationController
     else 
       today = Date.today
       date = sprintf("%04d-%02d", today.year, today.month)
-      Time.now.beginning_of_month
+      Time.now.beginning_of_month.to_date
     end
 
     @income_cash = Detail.get_current_income(current_user.id, date).first.amount
