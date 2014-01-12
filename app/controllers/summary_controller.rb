@@ -5,13 +5,13 @@ class SummaryController < ApplicationController
   def index
     @types = current_user.types
 
-    if params[:y] and params[:m]
+    @first_day = if params[:y] and params[:m]
       date = sprintf("%04d-%02d", params[:y], params[:m])
-      @first_day = Date.parse(sprintf("%s-01", date))
+      Date.parse(sprintf("%s-01", date))
     else 
       today = Date.today
       date = sprintf("%04d-%02d", today.year, today.month)
-      @first_day = Date.new(today.year, today.month, 1)
+      Time.now.beginning_of_month
     end
 
     @income_cash = Detail.get_current_income(current_user.id, date).first.amount
