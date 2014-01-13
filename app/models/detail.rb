@@ -25,11 +25,6 @@ class Detail < ActiveRecord::Base
     return self.find_by_sql([_sql_for_current_amount, user_id, date, INCOME, user_id])
   end
   
-  def get_current_income(date = false)
-    date = get_current_year_month if !date
-    return self.find_by_sql([_sql_for_current_amount, user_id, date, INCOME, user_id])
-  end
-
   def self.get_current_outgo(user_id = false, date = false)
     date = get_current_year_month if !date
     return self.find_by_sql([_sql_for_current_amount, user_id, date, OUTGO, user_id])
