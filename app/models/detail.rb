@@ -8,11 +8,6 @@ class Detail < ActiveRecord::Base
 
   after_save :_calc_card_amount
 
-  def self.get_current_year_month
-    today = Date.today
-    date = sprintf("%04d-%02d", today.year, today.month)
-  end
-
   def self.get_records_by_filter(user_id = false, type_id = false, sign = OUTGO, date = false)
     return false if !type_id or !user_id
     date = get_current_year_month if !date
@@ -20,13 +15,11 @@ class Detail < ActiveRecord::Base
     return self.find_by_sql([_sql_for_records_by_filter, first_day, user_id, date, type_id, sign, first_day, first_day])
   end
 
-  def self.get_current_income(user_id = false, date = false)
-    date = get_current_year_month if !date
+  def self.get_current_income(user_id = false)
     return self.find_by_sql([_sql_for_current_amount, user_id, date, INCOME, user_id])
   end
   
-  def self.get_current_outgo(user_id = false, date = false)
-    date = get_current_year_month if !date
+  def self.get_current_outgo(user_id = false)
     return self.find_by_sql([_sql_for_current_amount, user_id, date, OUTGO, user_id])
   end
 
