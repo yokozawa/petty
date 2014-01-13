@@ -14,7 +14,8 @@ class SummaryController < ApplicationController
       Time.now.beginning_of_month.to_date
     end
 
-    @income_cash = Detail.get_current_income(current_user.id, date).first.amount
+#    @income_cash = Detail.get_current_income(current_user.id, date).first.amount
+    @income_cash = current_user.details.get_current_income(date).first.amount
     @outgo_cash = Detail.get_current_outgo(current_user.id, date).first.amount
 
     @income_sum = 0
