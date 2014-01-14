@@ -14,6 +14,11 @@ class SummaryController < ApplicationController
       Time.now.beginning_of_month.to_date
     end
 
+    end_day = @first_day.end_of_month.to_date
+    @details = current_user.details.find(:all,
+      :conditions => 
+        {:record_at => @first_day...end_day}, :order => 'record_at asc')
+
     @income_cash = Detail.get_current_income(current_user.id, date).first.amount
     @outgo_cash = Detail.get_current_outgo(current_user.id, date).first.amount
 
