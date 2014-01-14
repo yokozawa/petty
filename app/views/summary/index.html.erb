@@ -69,4 +69,20 @@
   月末時点の現金残高：<%= @income_sum - eval("#{name}") %>
 </div>
 
+<ul>
+  <% @details.each do |detail| %>
+  <li>
+    <%= link_to detail.id, detail_path(detail.id) %>&nbsp;
+    <%= detail.record_at.strftime("%F") %>&nbsp;
+    ￥<%= detail.amount %> (<%= detail.desc %>) 
+    <%= detail.type.nil? ?  "un-selected" : detail.type.label %>
+    <%= detail.outline.nil? ?  "un-selected" : detail.outline.label %>
+    <%= link_to "[edit]", edit_detail_path(detail.id) %>
+    <%= link_to "[delete]", detail_path(detail.id), method: :delete, data:{confirm: "are you sure?"}  %>
+  </li>
+  <% end %>
+</ul>
+
+<p><%= link_to "Add New", new_detail_path %></p>
+
 <p><%= link_to "details", details_path %></p>
