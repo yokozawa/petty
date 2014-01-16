@@ -18,7 +18,7 @@ class DetailsController < ApplicationController
     @detail = Detail.new(detail_params)
     @detail.user_id = current_user.id
     if @detail.save
-      redirect_to details_path
+      redirect_to :controller => 'summary'
     else
       render 'new'
     end
@@ -29,7 +29,7 @@ class DetailsController < ApplicationController
 
   def update
     if @detail.update(detail_params)
-      redirect_to details_path
+      redirect_to :controller => 'summary'
     else
       render 'edit'
     end
@@ -37,7 +37,7 @@ class DetailsController < ApplicationController
 
   def destroy
     @detail.destroy
-    redirect_to details_path
+    redirect_to :controller => 'summary'
   end
 
   private
