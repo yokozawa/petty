@@ -38,7 +38,7 @@ class SummaryController < ApplicationController
       @recs.each do |rec|
         sum += rec['amount'] ? rec['amount'] : 0
       end
-      sum_name = sprintf("@outgo_sum_%d", type.id)
+      sum_name = "@outgo_sum_" + type.id.to_s
       instance_variable_set("#{sum_name}", sum)
     end
   end
