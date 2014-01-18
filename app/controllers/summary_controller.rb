@@ -19,7 +19,7 @@ class SummaryController < ApplicationController
       :conditions => 
         {:record_at => @first_day...end_day}, :order => 'record_at asc')
 
-    @income_cash = Detail.get_current_income(current_user.id, date).first.amount
+    @income_cash = current_user.details.get_current_income(current_user.id, date).first.amount
     @outgo_cash = Detail.get_current_outgo(current_user.id, date).first.amount
 
     @income_sum = 0
@@ -40,6 +40,9 @@ class SummaryController < ApplicationController
       end
       sum_name = "@outgo_sum_" + type.id.to_s
       instance_variable_set("#{sum_name}", sum)
+
+      name = "@hoge_" + 1
+      instance_variable_set("#{{name}}", 1000)
     end
   end
 end
