@@ -20,7 +20,7 @@ class SummaryController < ApplicationController
         {:record_at => @first_day...end_day}, :order => 'record_at asc')
 
     @income_cash = current_user.details.get_current_income(current_user.id, date).first.amount
-    @outgo_cash = Detail.get_current_outgo(current_user.id, date).first.amount
+    @outgo_cash = current_user.details.get_current_outgo(current_user.id, date).first.amount
 
     @income_sum = 0
     @types.each do |type|
