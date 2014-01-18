@@ -41,8 +41,6 @@ class SummaryController < ApplicationController
       sum_name = "@outgo_sum_" + type.id.to_s
       instance_variable_set("#{sum_name}", sum)
 
-      name = "@hoge_" + 1
-      instance_variable_set("#{{name}}", 1000)
     end
   end
 end
