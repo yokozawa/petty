@@ -39,8 +39,8 @@ class Detail < ActiveRecord::Base
 
     today = Date.today
     payment_date = Date.new(today.next_month.year, today.next_month.month, self.type.payment_day)
-    rec = Detail.find(:first, :conditions => {:user_id => self.user_id, :type_id => self.type.id, 
-      "year(record_at) = ? AND month(record_at) = ? AND day(record_at) =?", payment_date.year, payment_date.month, payment_date.day})
+    rec = Detail.find(:first, :conditions => {:user_id => self.user_id, :type_id => self.type.id
+      , "year(record_at) = ? AND month(record_at) = ? AND day(record_at) =?", payment_date.year, payment_date.month, payment_date.day})
 
     if type.cutoff_day == GETSUMATSU
       cutoff_date = sprintf("%04d-%02d-%02d", today.next_month.year, today.next_month.month, -1)
