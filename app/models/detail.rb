@@ -38,7 +38,7 @@ class Detail < ActiveRecord::Base
 #    rec = Detail.find_by_sql([_sql_for_card_record, self.user_id, type.id, payment_date]).first
 
     today = Date.today
-    payment_date = sprintf("%04d-%02d-%02d", today.next_month.year, today.next_month.month, self.type.payment_day)
+    payment_date = sprintf("%04d-%02d-%02d", today.next_month.year, today.next_month.month, payment_day)
     rec = Detail.find(:conditions => {:user_id => self.user_id, :type_id => self.type.id, :record_at => payment_day}).first
 
     if type.cutoff_day == GETSUMATSU
