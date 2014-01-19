@@ -37,6 +37,8 @@ class Detail < ActiveRecord::Base
        WHERE id= ?", self.type_id]).first
     return if !type.is_card
 
+    logger.debug(self.type)
+
     today = Date.today
     payment_date = sprintf("%04d-%02d-%02d", today.next_month.year, today.next_month.month, type.payment_day)
     rec = Detail.find_by_sql([_sql_for_card_record, self.user_id, type.id, payment_date]).first
