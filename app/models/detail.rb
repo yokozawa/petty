@@ -31,13 +31,13 @@ class Detail < ActiveRecord::Base
   end
 
   def _calc_card_amount
-    type = Detail.find_by_sql(["
-      SELECT t.*
-        FROM types t
-       WHERE id= ?", self.type_id]).first
-    return if !type.is_card
+#    type = Detail.find_by_sql(["
+#      SELECT t.*
+#        FROM types t
+#       WHERE id= ?", self.type_id]).first
+#    return if !type.is_card
 
-    logger.debug(self.type)
+    return if !self.type.is_card
 
     today = Date.today
     payment_date = sprintf("%04d-%02d-%02d", today.next_month.year, today.next_month.month, type.payment_day)
