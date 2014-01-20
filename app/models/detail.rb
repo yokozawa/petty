@@ -35,19 +35,31 @@ class Detail < ActiveRecord::Base
 
     today = Date.today
     payment_date = sprintf("%04d-%02d-%02d", today.next_month.year, today.next_month.month, type.payment_day)
-    rec = Detail.find_by_sql([_sql_for_card_record, self.user_id, type.id, payment_date]).first
+    rec = Detail.find_by_sql([_sql_for_card_record, self.user_id, type.id, payment_date]).first_or_create do |d|
+
+      if type.cutoff_day == GETSUMATSU
+        cutoff_date = sprintf("%04d-%02d-%02d", today.next_month.year, today.next_month.month, -1)
+      else 
+        cutoff_date = sprintf("%04d-%02d-%02d", today.year, today.month, type.cutoff_day)
+      end
+      summary = Detail.find_by_sql([_sql_for_card_summary, self.user_id, type.id, cutoff_date, cutoff_date]).first 
+
+      d.user_id = self.user_id
+      d.type_id = 1
+      d.created_by = type.id
+      d.amount = summary.amount
+      d.record_at = payment_date
+      d.sign = OUTGO
+      d.desc = type.label
+      d.save
+    end
+
 
 #    today = Date.today
 #    payment_date = Date.new(today.next_month.year, today.next_month.month, self.type.payment_day)
 #    rec = Detail.find(:first, :conditions => {:user_id => self.user_id, :type_id => self.type.id, ["year(record_at) = ? AND month(record_at) = ? AND day(record_at) =?", payment_date.year, payment_date.month, payment_date.day]})
 
-    if type.cutoff_day == GETSUMATSU
-      cutoff_date = sprintf("%04d-%02d-%02d", today.next_month.year, today.next_month.month, -1)
-    else 
-      cutoff_date = sprintf("%04d-%02d-%02d", today.year, today.month, type.cutoff_day)
-    end
-    summary = Detail.find_by_sql([_sql_for_card_summary, self.user_id, type.id, cutoff_date, cutoff_date]).first 
-
+=begin
     if rec != nil
       rec.amount = summary.amount
       rec.save
@@ -63,6 +75,7 @@ class Detail < ActiveRecord::Base
       )
       detail.save
     end
+=end
   end
 
   private
