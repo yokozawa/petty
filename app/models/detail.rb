@@ -38,7 +38,7 @@ class Detail < ActiveRecord::Base
 #    rec = Detail.find_by_sql([_sql_for_card_record, self.user_id, type.id, payment_date]).first_or_create do |d|
 
 
-    rec = Detail.where(:user_id => self.user_id, :type_id => type.id, ["DATE_FORMAT(record_at) = ?",payment_date]).first_or_create do |d|
+    rec = Detail.where("user_id = ? AND type_id = ? AND DATE_FORMAT(record_at, '%Y-%m-%d') = ?", self.user_id, type.id, payment_date).first_or_create do |d|
       if type.cutoff_day == GETSUMATSU
         cutoff_date = sprintf("%04d-%02d-%02d", today.next_month.year, today.next_month.month, -1)
       else 
