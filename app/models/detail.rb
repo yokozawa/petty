@@ -57,6 +57,14 @@ class Detail < ActiveRecord::Base
     end
 =end
 
+    if type.cutoff_day == GETSUMATSU
+      cutoff_date = sprintf("%04d-%02d-%02d", today.next_month.year, today.next_month.month, -1)
+    else 
+      cutoff_date = sprintf("%04d-%02d-%02d", today.year, today.month, type.cutoff_day)
+    end
+    summary = Detail.find_by_sql([_sql_for_card_summary, self.user_id, type.id, cutoff_date, cutoff_date]).first 
+
+
     if rec != nil
       rec.amount = summary.amount
       rec.save
