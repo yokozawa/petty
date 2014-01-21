@@ -56,33 +56,6 @@ class Detail < ActiveRecord::Base
     rec.amount = summary.amount
     rec.save
 
-=begin
-    rec = Detail.find_by_sql([_sql_for_card_record, self.user_id, type.id, payment_date]).first
-
-    if type.cutoff_day == GETSUMATSU
-      cutoff_date = sprintf("%04d-%02d-%02d", today.next_month.year, today.next_month.month, -1)
-    else 
-      cutoff_date = sprintf("%04d-%02d-%02d", today.year, today.month, type.cutoff_day)
-    end
-    summary = Detail.find_by_sql([_sql_for_card_summary, self.user_id, type.id, cutoff_date, cutoff_date]).first 
-
-
-    if rec != nil
-      rec.amount = summary.amount
-      rec.save
-    else
-      detail = Detail.new(
-        :user_id => self.user_id,
-        :type_id => 1,
-        :created_by => type.id,
-        :amount => summary.amount,
-        :record_at => payment_date,
-        :sign => OUTGO,
-        :desc => sprintf("%s", type.label)
-      )
-      detail.save
-    end
-=end
   end
 
   private
