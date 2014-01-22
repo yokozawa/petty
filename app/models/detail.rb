@@ -56,7 +56,7 @@ class Detail < ActiveRecord::Base
     end
 #    summary = Detail.find_by_sql([_sql_for_card_summary, self.user_id, type.id, cutoff_date, cutoff_date]).first 
 
-    from = to.prev_month.tommorrow
+    from = to.prev_month.tomorrow
     summary = Detail.where(:user_id => self.user_id, :type_id => type.id, record_at: from .. to).sum(:amount)
 
 
