@@ -61,7 +61,7 @@ class Detail < ActiveRecord::Base
 
 
 
-    rec.amount = summary.amount
+    rec.amount = summary
     rec.save
 
   end
