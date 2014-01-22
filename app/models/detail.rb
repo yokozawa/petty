@@ -46,20 +46,13 @@ class Detail < ActiveRecord::Base
       d.save
     end
 
-    if type.cutoff_day == GETSUMATSU
-#      cutoff_date = sprintf("%04d-%02d-%02d", today.next_month.year, today.next_month.month, -1)
-      to = today.end_of_month
-
+    to = if type.cutoff_day == GETSUMATSU
+      today.end_of_month
     else 
- #     cutoff_date = sprintf("%04d-%02d-%02d", today.year, today.month, type.cutoff_day)
-      to = Date.new(today.year, today.month, type.cutoff_day)
+      Date.new(today.year, today.month, type.cutoff_day)
     end
-#    summary = Detail.find_by_sql([_sql_for_card_summary, self.user_id, type.id, cutoff_date, cutoff_date]).first 
-
     from = to.prev_month.tomorrow
     summary = Detail.where(:user_id => self.user_id, :type_id => type.id, record_at: from .. to).sum(:amount)
-
-
 
     rec.amount = summary
     rec.save
@@ -112,17 +105,6 @@ class Detail < ActiveRecord::Base
        WHERE user_id = ?
          AND created_by = ?
          AND DATE_FORMAT(d.record_at, '%Y-%m-%d') = ?
-    "
-  end
-
-  def _sql_for_card_summary
-    sql = "
-      SELECT sum(d.amount) amount
-        FROM details d
-       WHERE d.user_id = ?
-         AND d.type_id = ?
-         AND d.record_at <= DATE_FORMAT(?, '%Y-%m-%d')
-         AND d.record_at >= (DATE_FORMAT(?, '%Y-%m-%d') - INTERVAL 1 MONTH)
     "
   end
 end
