@@ -47,11 +47,19 @@ class Detail < ActiveRecord::Base
     end
 
     if type.cutoff_day == GETSUMATSU
-      cutoff_date = sprintf("%04d-%02d-%02d", today.next_month.year, today.next_month.month, -1)
+#      cutoff_date = sprintf("%04d-%02d-%02d", today.next_month.year, today.next_month.month, -1)
+      to = today.month.end_of_month
+
     else 
-      cutoff_date = sprintf("%04d-%02d-%02d", today.year, today.month, type.cutoff_day)
+ #     cutoff_date = sprintf("%04d-%02d-%02d", today.year, today.month, type.cutoff_day)
+      to = Date.new(today.year, today.month, type.cutoff_day)
     end
-    summary = Detail.find_by_sql([_sql_for_card_summary, self.user_id, type.id, cutoff_date, cutoff_date]).first 
+#    summary = Detail.find_by_sql([_sql_for_card_summary, self.user_id, type.id, cutoff_date, cutoff_date]).first 
+
+    from = to.prev_month.tommorrow
+    summary = Detail.where(:user_id => self.user_id, :type_id => type.id, record_at: from .. to).sum(:amount)
+
+
 
     rec.amount = summary.amount
     rec.save
