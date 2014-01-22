@@ -48,7 +48,7 @@ class Detail < ActiveRecord::Base
 
     if type.cutoff_day == GETSUMATSU
 #      cutoff_date = sprintf("%04d-%02d-%02d", today.next_month.year, today.next_month.month, -1)
-      to = today.month.end_of_month
+      to = today.end_of_month
 
     else 
  #     cutoff_date = sprintf("%04d-%02d-%02d", today.year, today.month, type.cutoff_day)
