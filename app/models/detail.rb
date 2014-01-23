@@ -98,13 +98,4 @@ class Detail < ActiveRecord::Base
     "
   end 
 
-  def _sql_for_card_record
-    sql = "
-      SELECT d.*
-        FROM details d
-       WHERE user_id = ?
-         AND created_by = ?
-         AND DATE_FORMAT(d.record_at, '%Y-%m-%d') = ?
-    "
-  end
 end
