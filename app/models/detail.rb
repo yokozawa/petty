@@ -22,8 +22,8 @@ class Detail < ActiveRecord::Base
 
   def get_current_income(type_id)
     date = Date.today if !date
-    from = today.begining_of_month
-    Detail.where(:type_id => type_id, :sign => INCOME, record_at: from .. today).sum(:amount)
+    from = date.begining_of_month
+    Detail.where(:type_id => type_id, :sign => INCOME, record_at: from .. date).sum(:amount)
   end
   
   def self.get_current_outgo(user_id = false, date = false)
