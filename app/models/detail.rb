@@ -8,11 +8,6 @@ class Detail < ActiveRecord::Base
 
   after_save :_calc_card_amount
 
-  def self.get_current_year_month
-    today = Date.today
-    date = sprintf("%04d-%02d", today.year, today.month)
-  end
-
   def self.get_records_by_filter(user_id = false, type_id = false, sign = OUTGO, date = false)
     return false if !type_id or !user_id
     date = get_current_year_month if !date
