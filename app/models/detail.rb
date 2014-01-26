@@ -20,9 +20,10 @@ class Detail < ActiveRecord::Base
     return self.find_by_sql([_sql_for_records_by_filter, first_day, user_id, date, type_id, sign, first_day, first_day])
   end
 
-  def self.get_current_income(user_id = false, date = false)
-    date = get_current_year_month if !date
-    return self.find_by_sql([_sql_for_current_amount, user_id, date, INCOME, user_id])
+  def self.get_current_income(type_id)
+    date = Date.today if !date
+    from = today.begining_of_month
+    Detail.where(:type_id => type_id, :sign => INCOME, record_at: from .. today)
   end
   
   def self.get_current_outgo(user_id = false, date = false)
