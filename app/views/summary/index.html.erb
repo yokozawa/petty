@@ -9,8 +9,6 @@ $(function(){
 });
 </script>
 
-<%= cookies[:bank_amount].nil? 0 : cookies[:bank_amount] %>
-
 <div class="summary_header">
 現在の現金収入：<%= @income_cash ? @income_cash : 0 %><br />
 現在の現金支出：<%= @outgo_cash ? @outgo_cash : 0 %><br />
