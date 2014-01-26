@@ -15,9 +15,10 @@ class DetailsController < ApplicationController
   end 
 
   def create
-    @detail = Detail.new(detail_params)
-    @detail.user_id = current_user.id
-    if @detail.save
+    detail = current_user.details.build(detail_params)
+#    @detail = Detail.new(detail_params)
+#    @detail.user_id = current_user.id
+    if detail.save
       redirect_to :controller => 'summary'
     else
       render 'new'
