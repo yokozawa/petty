@@ -6,7 +6,7 @@ class Detail < ActiveRecord::Base
   validates :type, presence: true
   validates :amount, presence: true
 
-  after_save :_calc_card_amount
+  after_save :calc_card_amount
 
   def self.get_records_by_filter(user_id = false, type_id = false, sign = OUTGO, date = false)
     return false if !type_id or !user_id
@@ -15,19 +15,19 @@ class Detail < ActiveRecord::Base
     return self.find_by_sql([_sql_for_records_by_filter, first_day, user_id, date, type_id, sign, first_day, first_day])
   end
 
-  def self.get_current_income(type_id)
+  def get_current_income(type_id)
     date = Date.today if !date
     from = date.beginning_of_month
-    Detail.where(:type_id => type_id, :sign => INCOME, record_at: from .. date).sum(:amount)
+    self.where(:type_id => type_id, :sign => INCOME, record_at: from .. date).sum(:amount)
   end
   
-  def self.get_current_outgo(type_id)
+  def get_current_outgo(type_id)
     date = Date.today if !date
     from = date.beginning_of_month
-    Detail.where(:type_id => type_id, :sign => OUTGO, record_at: from .. date).sum(:amount)
+    self.where(:type_id => type_id, :sign => OUTGO, record_at: from .. date).sum(:amount)
   end
 
-  def _calc_card_amount
+  def calc_card_amount
     return if !self.type.is_card
 
     today = Date.today
