@@ -22,7 +22,7 @@ class Detail < ActiveRecord::Base
 
   def self.get_current_income(type_id)
     date = Date.today if !date
-    from = date.begining_of_month
+    from = date.beginning_of_month
     Detail.where(:type_id => type_id, :sign => INCOME, record_at: from .. date).sum(:amount)
   end
   
