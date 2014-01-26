@@ -6,12 +6,7 @@ class Detail < ActiveRecord::Base
   validates :type, presence: true
   validates :amount, presence: true
 
-  after_save :_calc_card_amount
-
-  def self.get_current_year_month
-    today = Date.today
-    date = sprintf("%04d-%02d", today.year, today.month)
-  end
+  after_save :calc_card_amount
 
   def self.get_records_by_filter(user_id = false, type_id = false, sign = OUTGO, date = false)
     return false if !type_id or !user_id
@@ -20,51 +15,45 @@ class Detail < ActiveRecord::Base
     return self.find_by_sql([_sql_for_records_by_filter, first_day, user_id, date, type_id, sign, first_day, first_day])
   end
 
-  def self.get_current_income(user_id = false, date = false)
-    date = get_current_year_month if !date
-    return self.find_by_sql([_sql_for_current_amount, user_id, date, INCOME, user_id])
+  def self.get_current_income(type_id)
+    date = Date.today if !date
+    from = date.beginning_of_month
+    where(:type_id => type_id, :sign => INCOME, record_at: from .. date).sum(:amount)
   end
   
-  def self.get_current_outgo(user_id = false, date = false)
-    date = get_current_year_month if !date
-    return self.find_by_sql([_sql_for_current_amount, user_id, date, OUTGO, user_id])
+  def self.get_current_outgo(type_id)
+    date = Date.today if !date
+    from = date.beginning_of_month
+    where(:type_id => type_id, :sign => OUTGO, record_at: from .. date).sum(:amount)
   end
 
-  def _calc_card_amount
-    type = Detail.find_by_sql(["
-      SELECT t.*
-        FROM types t
-       WHERE id= ?", self.type_id]).first
-    return if !type.is_card
-
-    logger.debug(self.type)
+  def calc_card_amount
+    return if !self.type.is_card
 
     today = Date.today
     payment_date = sprintf("%04d-%02d-%02d", today.next_month.year, today.next_month.month, type.payment_day)
-    rec = Detail.find_by_sql([_sql_for_card_record, self.user_id, type.id, payment_date]).first
 
-    if type.cutoff_day == GETSUMATSU
-      cutoff_date = sprintf("%04d-%02d-%02d", today.next_month.year, today.next_month.month, -1)
+    rec = Detail.where("user_id = ? AND created_by = ? AND DATE_FORMAT(record_at, '%Y-%m-%d') = ?", self.user_id, type.id, payment_date).first_or_create do |d|
+      d.user_id = self.user_id
+      d.type_id = 1
+      d.created_by = type.id
+      d.record_at = payment_date
+      d.sign = OUTGO
+      d.desc = type.label
+      d.save
+    end
+
+    to = if type.cutoff_day == GETSUMATSU
+      today.end_of_month
     else 
-      cutoff_date = sprintf("%04d-%02d-%02d", today.year, today.month, type.cutoff_day)
+      Date.new(today.year, today.month, type.cutoff_day)
     end
-    summary = Detail.find_by_sql([_sql_for_card_summary, self.user_id, type.id, cutoff_date, cutoff_date]).first 
+    from = to.prev_month.tomorrow
+    summary = Detail.where(:user_id => self.user_id, :type_id => type.id, record_at: from .. to).sum(:amount)
 
-    if rec != nil
-      rec.amount = summary.amount
-      rec.save
-    else
-      detail = Detail.new(
-        :user_id => self.user_id,
-        :type_id => 1,
-        :created_by => type.id,
-        :amount => summary.amount,
-        :record_at => payment_date,
-        :sign => OUTGO,
-        :desc => sprintf("%s", type.label)
-      )
-      detail.save
-    end
+    rec.amount = summary
+    rec.save
+
   end
 
   private
@@ -94,36 +83,4 @@ class Detail < ActiveRecord::Base
     "
   end
 
-  def self._sql_for_current_amount
-    sql = "
-      SELECT SUM(d.amount) amount
-        FROM details d
-       WHERE d.user_id = ?
-         AND DATE_FORMAT(d.record_at, '%Y-%m') = ?
-         AND d.record_at <= now()
-         AND d.sign = ?
-         AND d.type_id = (select min(id) from types where user_id = ?)
-    "
-  end 
-
-  def _sql_for_card_record
-    sql = "
-      SELECT d.*
-        FROM details d
-       WHERE user_id = ?
-         AND created_by = ?
-         AND DATE_FORMAT(d.record_at, '%Y-%m-%d') = ?
-    "
-  end
-
-  def _sql_for_card_summary
-    sql = "
-      SELECT sum(d.amount) amount
-        FROM details d
-       WHERE d.user_id = ?
-         AND d.type_id = ?
-         AND d.record_at <= DATE_FORMAT(?, '%Y-%m-%d')
-         AND d.record_at >= (DATE_FORMAT(?, '%Y-%m-%d') - INTERVAL 1 MONTH)
-    "
-  end
 end

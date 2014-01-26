@@ -12,9 +12,8 @@ class OutlinesController < ApplicationController
   end
 
   def create
-    @outline = Outline.new(outline_params)
-    @outline.user_id = current_user.id
-    if @outline.save
+    outline = current_user.outlines.build(outline_params)
+    if outline.save
       redirect_to outlines_path
     else
       render 'new'
@@ -25,7 +24,7 @@ class OutlinesController < ApplicationController
   end
 
   def update
-    if @outline.update(outline_params)
+    if outline.update(outline_params)
       redirect_to outlines_path
     else
       render 'edit'
@@ -33,7 +32,7 @@ class OutlinesController < ApplicationController
   end
 
   def destroy
-    @outline.destroy
+    outline.destroy
     redirect_to outlines_path
   end
 
@@ -43,7 +42,7 @@ class OutlinesController < ApplicationController
     end
 
     def set_outline
-      @outline = Outline.find(params[:id])
+      outline = Outline.find(params[:id])
     end
 
 end
