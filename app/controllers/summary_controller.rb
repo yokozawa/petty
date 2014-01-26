@@ -19,11 +19,8 @@ class SummaryController < ApplicationController
       :conditions => 
         {:record_at => @first_day...end_day}, :order => 'record_at asc')
 
-#    @income_cash = current_user.details.get_current_income(current_user.id, date).first.amount
-    @income_cash = current_user.details.get_current_income(@types.minimum(:id))
- 
-    @outgo_cash = current_user.details.get_current_outgo(current_user.id, date).first.amount
-#    @outgo_cash = current_user.details.get_current_income(@types.minimum(:id))
+    @income_cash = current_user.details.get_current_income(@types.minimum(:id)) 
+    @outgo_cash = current_user.details.get_current_outgo(@types.minimum(:id))
 
     @income_sum = 0
     @types.each do |type|
