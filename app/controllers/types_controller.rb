@@ -8,7 +8,7 @@ class TypesController < ApplicationController
   end
 
   def new
-    @type = Type.new(outline_params)
+    @type = Type.new
   end
 
   def create

@@ -11,7 +11,7 @@ class DetailsController < ApplicationController
   end
 
   def new
-    @detail = Detail.new(outline_params)
+    @detail = Detail.new
   end
 
   def create

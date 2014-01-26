@@ -8,7 +8,7 @@ class OutlinesController < ApplicationController
   end
 
   def new
-    @outline = Outline.new(outline_params)
+    @outline = Outline.new
   end
 
   def create
