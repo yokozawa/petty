@@ -83,16 +83,4 @@ class Detail < ActiveRecord::Base
     "
   end
 
-  def self._sql_for_current_amount
-    sql = "
-      SELECT SUM(d.amount) amount
-        FROM details d
-       WHERE d.user_id = ?
-         AND DATE_FORMAT(d.record_at, '%Y-%m') = ?
-         AND d.record_at <= now()
-         AND d.sign = ?
-         AND d.type_id = (select min(id) from types where user_id = ?)
-    "
-  end 
-
 end

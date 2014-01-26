@@ -8,13 +8,12 @@ class TypesController < ApplicationController
   end
 
   def new
-    @type = Type.new
+    @type = Type.new(outline_params)
   end
 
   def create
-    @type = Type.new(type_params)
-    @type.user_id = current_user.id
-    if @type.save
+    type = current_user.types.build(type_params)
+    if type.save
       redirect_to types_path
     else
       render 'new'
@@ -25,7 +24,7 @@ class TypesController < ApplicationController
   end
 
   def update
-    if @type.update(type_params)
+    if type.update(type_params)
       redirect_to types_path
     else
       render 'edit'
@@ -33,7 +32,7 @@ class TypesController < ApplicationController
   end
 
   def destroy
-    @type.destroy
+    type.destroy
     redirect_to types_path
   end
 
@@ -43,7 +42,7 @@ class TypesController < ApplicationController
     end
 
     def set_type
-      @type = Type.find(params[:id])
+      type = Type.find(params[:id])
     end
 
 end

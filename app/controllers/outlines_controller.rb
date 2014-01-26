@@ -7,6 +7,10 @@ class OutlinesController < ApplicationController
     @outlines = current_user.outlines.all
   end
 
+  def new
+    @outline = Outline.new(outline_params)
+  end
+
   def create
     outline = current_user.outlines.build(outline_params)
     if outline.save

@@ -11,13 +11,11 @@ class DetailsController < ApplicationController
   end
 
   def new
-    @detail = Detail.new
-  end 
+    @detail = Detail.new(outline_params)
+  end
 
   def create
     detail = current_user.details.build(detail_params)
-#    @detail = Detail.new(detail_params)
-#    @detail.user_id = current_user.id
     if detail.save
       redirect_to :controller => 'summary'
     else
@@ -29,7 +27,7 @@ class DetailsController < ApplicationController
   end 
 
   def update
-    if @detail.update(detail_params)
+    if detail.update(detail_params)
       redirect_to :controller => 'summary'
     else
       render 'edit'
@@ -37,7 +35,7 @@ class DetailsController < ApplicationController
   end
 
   def destroy
-    @detail.destroy
+    detail.destroy
     redirect_to :controller => 'summary'
   end
 
@@ -47,7 +45,7 @@ class DetailsController < ApplicationController
   end
 
   def set_detail
-    @detail = Detail.find(params[:id])
+    detail = Detail.find(params[:id])
   end
 
 end
