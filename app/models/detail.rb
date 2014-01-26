@@ -15,16 +15,16 @@ class Detail < ActiveRecord::Base
     return self.find_by_sql([_sql_for_records_by_filter, first_day, user_id, date, type_id, sign, first_day, first_day])
   end
 
-  def get_current_income(type_id)
+  def self.get_current_income(type_id)
     date = Date.today if !date
     from = date.beginning_of_month
-    self.where(:type_id => type_id, :sign => INCOME, record_at: from .. date).sum(:amount)
+    where(:type_id => type_id, :sign => INCOME, record_at: from .. date).sum(:amount)
   end
   
-  def get_current_outgo(type_id)
+  def self.get_current_outgo(type_id)
     date = Date.today if !date
     from = date.beginning_of_month
-    self.where(:type_id => type_id, :sign => OUTGO, record_at: from .. date).sum(:amount)
+    where(:type_id => type_id, :sign => OUTGO, record_at: from .. date).sum(:amount)
   end
 
   def calc_card_amount
