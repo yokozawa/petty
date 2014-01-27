@@ -1,19 +1,23 @@
 <h1>summary</h1>
 
 <script type="text/javascript">
-$(function(){
+function save(){
+  val1 = $("#bank_amount").val();
   var amount = 224623;
   var cookie_name = 'bank_amount';
   $.cookie.defaults.path = "/";
   $.cookie(cookie_name, amount);
-});
+}
 </script>
 
 <div class="summary_header">
 現在の現金収入：<%= @income_cash ? @income_cash : 0 %><br />
 現在の現金支出：<%= @outgo_cash ? @outgo_cash : 0 %><br />
 現在の現金残高：<%= (@income_cash ? @income_cash : 0) - (@outgo_cash ? @outgo_cash : 0) %><br />
-現在の財布残高：<%= (@income_cash ? @income_cash : 0) - (@outgo_cash ? @outgo_cash : 0) - 36065 %><br />
+現在の銀行残高：<input type="text" name="bank_amount" id="bank_amount" value="<%= cookies[:bank_amount] %>"/>
+現在の財布残高：<%= (@income_cash ? @income_cash : 0) - (@outgo_cash ? @outgo_cash : 0) - cookies[:bank_amount] %><br />
+<input type="button" onclick="save();" value="save bank_amount" />
+
 </div>
 
 <div class="calendar_haeder">
