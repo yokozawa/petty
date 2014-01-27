@@ -6,6 +6,7 @@ function save(){
   var cookie_name = 'bank_amount';
   $.cookie.defaults.path = "/";
   $.cookie(cookie_name, amount);
+  location.reload();
 }
 </script>
 
