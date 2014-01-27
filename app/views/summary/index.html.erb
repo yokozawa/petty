@@ -14,8 +14,9 @@ function save(){
 現在の現金支出：<%= @outgo_cash ? @outgo_cash : 0 %><br />
 現在の現金残高：<%= (@income_cash ? @income_cash : 0) - (@outgo_cash ? @outgo_cash : 0) %><br />
 現在の銀行残高：<input type="text" name="bank_amount" id="bank_amount" value="<%= cookies[:bank_amount] %>"/>
-現在の財布残高：<%= (@income_cash ? @income_cash : 0) - (@outgo_cash ? @outgo_cash : 0) - (cookies[:bank_amount] ? cookies[:bank_amount].to_i : 0) %><br />
 <input type="button" onclick="save();" value="save bank_amount" />
+<br />
+現在の財布残高：<%= (@income_cash ? @income_cash : 0) - (@outgo_cash ? @outgo_cash : 0) - (cookies[:bank_amount] ? cookies[:bank_amount].to_i : 0) %><br />
 
 </div>
 
