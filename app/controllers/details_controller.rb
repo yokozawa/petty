@@ -27,7 +27,7 @@ class DetailsController < ApplicationController
   end 
 
   def update
-    if detail.update(detail_params)
+    if @detail.update(detail_params)
       redirect_to :controller => 'summary'
     else
       render 'edit'
@@ -45,7 +45,7 @@ class DetailsController < ApplicationController
   end
 
   def set_detail
-    detail = Detail.find(params[:id])
+    @detail = Detail.find(params[:id])
   end
 
 end

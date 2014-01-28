@@ -24,7 +24,7 @@ class OutlinesController < ApplicationController
   end
 
   def update
-    if outline.update(outline_params)
+    if @outline.update(outline_params)
       redirect_to outlines_path
     else
       render 'edit'
@@ -42,7 +42,7 @@ class OutlinesController < ApplicationController
     end
 
     def set_outline
-      outline = Outline.find(params[:id])
+      @outline = Outline.find(params[:id])
     end
 
 end
