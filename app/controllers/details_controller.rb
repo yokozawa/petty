@@ -35,7 +35,7 @@ class DetailsController < ApplicationController
   end
 
   def destroy
-    detail.destroy
+    @detail.destroy
     redirect_to :controller => 'summary'
   end
 

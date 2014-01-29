@@ -32,7 +32,7 @@ class OutlinesController < ApplicationController
   end
 
   def destroy
-    outline.destroy
+    @outline.destroy
     redirect_to outlines_path
   end
 
