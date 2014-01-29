@@ -32,7 +32,7 @@ class TypesController < ApplicationController
   end
 
   def destroy
-    type.destroy
+    @type.destroy
     redirect_to types_path
   end
 
