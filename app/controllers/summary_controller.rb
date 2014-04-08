@@ -2,8 +2,6 @@ class SummaryController < ApplicationController
 
   before_filter :authenticate_user!
 
-  include TimeExt
-
   def index
 t = Time.now
 @days = t.days
