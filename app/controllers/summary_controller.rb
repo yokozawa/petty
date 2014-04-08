@@ -2,7 +2,12 @@ class SummaryController < ApplicationController
 
   before_filter :authenticate_user!
 
+  include TimeExt
+
   def index
+t = Time.now
+@days = t.days
+
     @types = current_user.types
 
     @first_day = if params[:y] and params[:m]
