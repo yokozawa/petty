@@ -8,19 +8,12 @@ class Detail < ActiveRecord::Base
 
   after_save :calc_card_amount
 
-  def self.get_records_by_filter(user_id = false, type_id = false, sign = OUTGO, date = false)
-    return false if !type_id or !user_id
-    date = get_current_year_month if !date
-    first_day = sprintf("%s-01", date)
-    return self.find_by_sql([_sql_for_records_by_filter, first_day, user_id, date, type_id, sign, first_day, first_day])
-  end
-
   def self.get_current_income(type_id)
     date = Date.today if !date
     from = date.beginning_of_month
     where(:type_id => type_id, :sign => INCOME, record_at: from .. date).sum(:amount)
   end
-  
+
   def self.get_current_outgo(type_id)
     date = Date.today if !date
     from = date.beginning_of_month
@@ -45,7 +38,7 @@ class Detail < ActiveRecord::Base
 
     to = if type.cutoff_day == GETSUMATSU
       today.end_of_month
-    else 
+    else
       Date.new(today.year, today.month, type.cutoff_day)
     end
     from = to.prev_month.tomorrow
@@ -54,33 +47,6 @@ class Detail < ActiveRecord::Base
     rec.amount = summary
     rec.save
 
-  end
-
-  private
-  def self._sql_for_records_by_filter
-    sql = "
-	SELECT ADDDATE(DATE(DATE_FORMAT(?, '%Y-%m-01')), n.count) date
-	       ,d.type_id
-	       ,d.sign
-	       ,d.amount
-	  FROM num n
-	  LEFT OUTER JOIN (
-	      SELECT date_format(d.record_at, '%Y-%m-%d') record_date
-	             ,d.type_id type_id
-	             ,d.sign sign
-	             ,sum(d.amount) amount
-	        FROM details d
-	       WHERE d.user_id = ?
-             AND DATE_FORMAT(d.record_at, '%Y-%m') = ?
-	         AND d.type_id = ?
-	         AND d.sign = ?
-	       GROUP BY DATE_FORMAT(d.record_at, '%Y/%m/%d'), d.type_id, d.sign
-	       ORDER BY 1 ASC
-	  ) d
-	    ON ADDDATE(DATE(DATE_FORMAT(?, '%Y-%m-01')), n.count) = d.record_date
-	 WHERE n.count <= DAYOFMONTH((DATE(DATE_FORMAT(?, '%Y-%m-01')) + INTERVAL 1 MONTH) - INTERVAL 1 DAY)
-	 ORDER BY n.count ASC
-    "
   end
 
 end

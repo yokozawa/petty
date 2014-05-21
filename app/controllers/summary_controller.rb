@@ -3,47 +3,54 @@ class SummaryController < ApplicationController
   before_filter :authenticate_user!
 
   def index
-t = Time.now
-@days = t.days
-
     @types = current_user.types
 
-    @first_day = if params[:y] and params[:m]
+    # get current cash
+    @current_income = current_user.details.get_current_income(@types.minimum(:id))
+    @current_outgo = current_user.details.get_current_outgo(@types.minimum(:id))
+
+    # set target date and get target details
+    t = if params[:y] and params[:m]
       date = sprintf("%04d-%02d", params[:y], params[:m])
-      Date.parse(sprintf("%s-01", date))
-    else 
-      today = Date.today
-      date = sprintf("%04d-%02d", today.year, today.month)
-      Time.now.beginning_of_month.to_date
+      Time.parse(sprintf("%s-01", date))
+    else
+      Time.now
+    end
+    @days = (t.beginning_of_month.to_date..t.end_of_month.to_date).to_a
+    @first_day_of_month = t.beginning_of_month.to_date
+
+    @details = current_user.details.where(record_at: @days)
+
+    # summary income
+    income_summary = @details.where(sign: INCOME)
+      .group('date_format(record_at, "%Y-%m-%d")').sum(:amount)
+    @income_cash_key = "#{@types.minimum(:id)}-#{INCOME}"
+    @day_summary = {}
+    @month_summary = {}
+    @month_summary.default = 0
+    @days.each do |day|
+      amounts = {}
+      amounts.default = 0
+      income_cash = income_summary[day.strftime("%Y-%m-%d")] || 0
+      amounts[@income_cash_key] = income_cash
+      @month_summary[@income_cash_key] += income_cash
+      @day_summary[day] = amounts
     end
 
-    end_day = @first_day.end_of_month.to_date
-    @details = current_user.details.find(:all,
-      :conditions => 
-        {:record_at => @first_day...end_day}, :order => 'record_at asc')
-
-    @income_cash = current_user.details.get_current_income(@types.minimum(:id)) 
-    @outgo_cash = current_user.details.get_current_outgo(@types.minimum(:id))
-
-    @income_sum = 0
+    # summary outgo
     @types.each do |type|
-      name = sprintf("@recs_%d_%d", type.id, INCOME)
-      @recs = Detail.get_records_by_filter(current_user.id, type.id, INCOME, date)
-      instance_variable_set("#{name}", @recs)
-      @recs.each do |rec|
-        @income_sum += rec['amount'] ? rec['amount'] : 0 
-      end
+      outgo_summary = @details.where(sign: OUTGO, type_id: type.id)
+        .group('date_format(record_at, "%Y-%m-%d")').sum(:amount)
 
-      name = sprintf("@recs_%d_%d", type.id, OUTGO)
-      @recs = Detail.get_records_by_filter(current_user.id, type.id, OUTGO, date)
-      instance_variable_set("#{name}", @recs)
-      sum = 0
-      @recs.each do |rec|
-        sum += rec['amount'] ? rec['amount'] : 0
+      @days.each do |day|
+        outgo_cash = outgo_summary[day.strftime("%Y-%m-%d")] || 0
+        amounts = @day_summary[day]
+        amounts[type.id] = outgo_cash
+        @day_summary[day] = amounts
+        @month_summary[type.id] += outgo_cash
       end
-      sum_name = "@outgo_sum_" + type.id.to_s
-      instance_variable_set("#{sum_name}", sum)
-
     end
+
   end
+
 end

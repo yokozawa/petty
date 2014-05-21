@@ -1,17 +1,36 @@
 source 'https://rubygems.org'
 
+gem 'mysql2'
 gem 'devise'
-gem 'quiet_assets'
+gem 'draper'
+gem 'haml'
+gem 'kaminari'
+gem 'paranoia'
+gem 'bootstrap_form'
+gem 'rails_config'
+gem 'simple_form'
+gem 'therubyracer'
+gem 'less-rails'
+gem 'twitter-bootstrap-rails'
+
+group :development do
+  gem 'better_errors'
+  gem 'binding_of_caller'
+  gem 'meta_request'
+  gem 'pry-rails'
+  gem 'pry-debugger'
+  gem 'pry-doc'
+  gem 'quiet_assets'
+end
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.0.0'
+gem 'rails', '4.1.1'
 
 # Use sqlite3 as the database for Active Record
 #gem 'sqlite3'
-gem 'mysql2'
 
 # Use SCSS for stylesheets
-gem 'sass-rails', '~> 4.0.0'
+gem 'sass-rails', '~> 4.0.3'
 
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
@@ -31,12 +50,14 @@ gem 'jquery-cookie-rails'
 gem 'turbolinks'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-gem 'jbuilder', '~> 1.2'
+gem 'jbuilder', '~> 2.0'
 
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
   gem 'sdoc', require: false
 end
+
+gem 'spring',        group: :development
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'

@@ -11,24 +11,22 @@ function save(){
 </script>
 
 <div class="summary_header">
-現在の現金収入：<%= @income_cash ? @income_cash : 0 %><br />
-現在の現金支出：<%= @outgo_cash ? @outgo_cash : 0 %><br />
-現在の現金残高：<%= (@income_cash ? @income_cash : 0) - (@outgo_cash ? @outgo_cash : 0) %><br />
+現在の現金収入：<%= @current_income ? @current_income : 0 %><br />
+現在の現金支出：<%= @current_outgo ? @current_outgo : 0 %><br />
+現在の現金残高：<%= (@current_income ? @current_income : 0) - (@current_outgo ? @current_outgo : 0) %><br />
 現在の銀行残高：<input type="text" name="bank_amount" id="bank_amount" value="<%= cookies[:bank_amount] %>"/>
 <input type="button" onclick="save();" value="save bank_amount" />
 <br />
-現在の財布残高：<%= (@income_cash ? @income_cash : 0) - (@outgo_cash ? @outgo_cash : 0) - (cookies[:bank_amount] ? cookies[:bank_amount].to_i : 0) %><br />
+現在の財布残高：<%= (@current_income ? @current_income : 0) - (@current_outgo ? @current_outgo : 0) - (cookies[:bank_amount] ? cookies[:bank_amount].to_i : 0) %><br />
 
 </div>
 
 <div class="calendar_haeder">
-<%= link_to "<<", :controller => 'summary', :y => @first_day.last_month.year , :m => @first_day.last_month.month %>
-<%= @first_day.year -%>年<%= @first_day.month %>月
-<%= link_to ">>", :controller => 'summary', :y => @first_day.next_month.year , :m => @first_day.next_month.month %>
+<%= link_to "<<", :controller => 'summary', :y => @first_day_of_month.last_month.year , :m => @first_day_of_month.last_month.month %>
+<%= @first_day_of_month.year -%>年<%= @first_day_of_month.month %>月
+<%= link_to ">>", :controller => 'summary', :y => @first_day_of_month.next_month.year , :m => @first_day_of_month.next_month.month %>
 </div>
 
-<% i = 0 %>
-<% xdate = @first_day %>
 <table border="1">
   <tr>
     <th>日付</th>
@@ -41,47 +39,33 @@ function save(){
     <% end %>
   </tr>
   <% i = 0 %>
-  <% while ((xdate < @first_day) or (xdate.month == @first_day.month)) do %>
+  <% @days.each do |day| %>
     <tr>
       <td>
-        <%= xdate.year %>/<%= xdate.month %>/<%= xdate.day %>
+        <%= day %>
       </td>
       <td>
-        <% sum = 0 %>
-        <% @types.each do |type| %>
-          <% name = sprintf("@recs_%d_%d", type.id, INCOME) %>
-          <% @recs = eval("#{name}") %>
-          <% if @recs[i]['amount'] %><% sum += @recs[i]['amount'] %><% end %>
-        <% end %>
-        <% if sum > 0 %>+<%= sum %><br /><% end %>
+        <%= @day_summary[day][@income_cash_key] if @day_summary[day][@income_cash_key] > 0 %>
       </td>
       <% @types.each do |type| %>
         <td>
-          <% name = sprintf("@recs_%d_%d", type.id, OUTGO) %>
-          <% @recs = eval("#{name}") %>
-          <% if @recs[i]['amount'] %>
-            -<%= @recs[i]['amount'] %><br />
-          <% end %>
+          <%= "-#{@day_summary[day][type.id]}" if @day_summary[day][type.id] > 0 %>
         </td>
       <% end %>
     </tr>
-    <% i += 1 %>
-    <% xdate += 1 %>
   <% end %>
 
   <tr>
     <td>合計</td>
-    <td>+<%= @income_sum %></td>
+    <td>+<%= @month_summary[@income_cash_key] %></td>
     <% @types.each do |type| %>
-      <% name = sprintf("@outgo_sum_%d", type.id) %>
-      <td>-<%= eval("#{name}") %></td>
+      <td>-<%= @month_summary[type.id] %></td>
     <% end %>
   </tr>
 </table>
 
 <div class="summary_footer">
-  <% name = sprintf("@outgo_sum_%d", @types.first.id) %>
-  月末時点の現金残高：<%= @income_sum - eval("#{name}") %>
+  月末時点の現金残高：<%= @month_summary[@income_cash_key] - @month_summary[@types.minimum(:id)] %>
 </div>
 
 <ul>
@@ -89,7 +73,7 @@ function save(){
   <li>
     <%= link_to detail.id, detail_path(detail.id) %>&nbsp;
     <%= detail.record_at.strftime("%F") %>&nbsp;
-    ￥<%= detail.amount %> (<%= detail.desc %>) 
+    ￥<%= detail.amount %> (<%= detail.desc %>)
     <%= detail.type.nil? ?  "un-selected" : detail.type.label %>
     <%= detail.outline.nil? ?  "un-selected" : detail.outline.label %>
     <%= link_to "[edit]", edit_detail_path(detail.id) %>
