@@ -19,7 +19,7 @@ class SummaryController < ApplicationController
     @days = (t.beginning_of_month.to_date..t.end_of_month.to_date).to_a
     @first_day_of_month = t.beginning_of_month.to_date
 
-    @details = current_user.details.where(record_at: @days)
+    @details = current_user.details.where(record_at: @days).order(:record_at)
 
     # summary income
     income_summary = @details.where(sign: INCOME)
