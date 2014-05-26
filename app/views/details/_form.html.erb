@@ -1,18 +1,17 @@
-<%= form_for @detail do |f| %>
-  <p><%= f.date_select :record_at, :use_month_numbers => true %></p>
-  <p><%= select :detail, :sign, {"+" => 0, "-" => 1}, :selected => 1 %></p>
-  <p><%= f.label :amount %>:<%= f.number_field :amount %></p>
-    <% if @detail.errors.any? %>
-      <p class="error"><%= @detail.errors.messages[:amount][0] %></p>
-    <% end %>
-  <p><%= f.label :type %>:<%= f.collection_select :type_id, Type.where(:user_id => current_user.id).all, :id, :label, :include_blank => true %></p>
-    <% if @detail.errors.any? %>
-      <p class="error"><%= @detail.errors.messages[:type][0] %></p>
-    <% end %>
-  <p><%= f.label :outline %>:<%= f.collection_select :outline_id, Outline.where(:user_id => current_user.id).all, :id, :label, :include_blank => true %></p>
-  <p><%= f.label :desc %>:<%= f.text_field :desc %></p>
-    <% if @detail.errors.any? %>
-      <p class="error"><%= @detail.errors.messages[:desc][0] %></p>
-    <% end %>
-  <p><%= f.submit %></p>
+<%= simple_form_for @detail, :html => { :class => 'form-horizontal' } do |f| %>
+  <%= f.input :user_id %>
+  <%= f.input :amount %>
+  <%= f.input :desc %>
+  <%= f.input :type_id %>
+  <%= f.input :outline_id %>
+  <%= f.input :deleted %>
+  <%= f.input :timestamps %>
+  <%= f.input :created_by %>
+  <%= f.input :record_at %>
+  <%= f.input :sign %>
+  <div class="form-actions">
+    <%= f.button :submit, :class => 'btn-primary' %>
+    <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
+                details_path, :class => 'btn' %>
+  </div>
 <% end %>

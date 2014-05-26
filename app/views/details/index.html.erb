@@ -1,20 +1,55 @@
-<h1>Details</h1>
-<ul>
-  <% @details.each do |detail| %>
-  <li>
-    <%= link_to detail.id, detail_path(detail.id) %>&nbsp;
-    <%= detail.record_at.strftime("%F") %>&nbsp;
-    ￥<%= detail.amount %> (<%= detail.desc %>) 
-    <%= detail.type.nil? ?  "un-selected" : detail.type.label %>
-    <%= detail.outline.nil? ?  "un-selected" : detail.outline.label %>
-    <%= link_to "[edit]", edit_detail_path(detail.id) %>
-    <%= link_to "[delete]", detail_path(detail.id), method: :delete, data:{confirm: "are you sure?"}  %>
-  </li>
-  <% end %>
-</ul>
+<%- model_class = Detail -%>
+<div class="page-header">
+  <h1><%=t '.title', :default => model_class.model_name.human.pluralize.titleize %></h1>
+</div>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th><%= model_class.human_attribute_name(:id) %></th>
+      <th><%= model_class.human_attribute_name(:user_id) %></th>
+      <th><%= model_class.human_attribute_name(:amount) %></th>
+      <th><%= model_class.human_attribute_name(:desc) %></th>
+      <th><%= model_class.human_attribute_name(:type_id) %></th>
+      <th><%= model_class.human_attribute_name(:outline_id) %></th>
+      <th><%= model_class.human_attribute_name(:deleted) %></th>
+      <th><%= model_class.human_attribute_name(:timestamps) %></th>
+      <th><%= model_class.human_attribute_name(:created_by) %></th>
+      <th><%= model_class.human_attribute_name(:record_at) %></th>
+      <th><%= model_class.human_attribute_name(:sign) %></th>
+      <th><%= model_class.human_attribute_name(:created_at) %></th>
+      <th><%=t '.actions', :default => t("helpers.actions") %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @details.each do |detail| %>
+      <tr>
+        <td><%= link_to detail.id, detail_path(detail) %></td>
+        <td><%= detail.user_id %></td>
+        <td><%= detail.amount %></td>
+        <td><%= detail.desc %></td>
+        <td><%= detail.type_id %></td>
+        <td><%= detail.outline_id %></td>
+        <td><%= detail.deleted %></td>
+        <td><%= detail.timestamps %></td>
+        <td><%= detail.created_by %></td>
+        <td><%= detail.record_at %></td>
+        <td><%= detail.sign %></td>
+        <td><%=l detail.created_at %></td>
+        <td>
+          <%= link_to t('.edit', :default => t("helpers.links.edit")),
+                      edit_detail_path(detail), :class => 'btn btn-mini' %>
+          <%= link_to t('.destroy', :default => t("helpers.links.destroy")),
+                      detail_path(detail),
+                      :method => :delete,
+                      :data => { :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => 'Are you sure?')) },
+                      :class => 'btn btn-mini btn-danger' %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
 
-<p><%= link_to "Add New", new_detail_path %></p>
-
-<p><%= link_to "summary", "controller" => "summary" %></p>
-<p><%= link_to "type setting", types_path %></p>
-<p><%= link_to "outline setting", outlines_path %></p>
+<%= paginate @details %>
+<%= link_to t('.new', :default => t("helpers.links.new")),
+            new_detail_path,
+            :class => 'btn btn-primary' %>

@@ -1,10 +1,10 @@
 class DetailsController < ApplicationController
- 
+
   before_action :set_detail, only:[:show, :edit, :update, :destroy]
   before_filter :authenticate_user!
 
   def index
-    @details = current_user.details.order('record_at asc')
+    @details = current_user.details.order('record_at asc').page params[:page]
   end
 
   def show
@@ -24,7 +24,7 @@ class DetailsController < ApplicationController
   end
 
   def edit
-  end 
+  end
 
   def update
     if @detail.update(detail_params)

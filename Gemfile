@@ -9,7 +9,6 @@ gem 'paranoia'
 gem 'bootstrap_form'
 gem 'rails_config'
 gem 'simple_form'
-gem 'therubyracer'
 gem 'less-rails'
 gem 'twitter-bootstrap-rails'
 
