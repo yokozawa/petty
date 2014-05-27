@@ -11,7 +11,7 @@ class DetailsController < ApplicationController
   end
 
   def new
-    @detail = Detail.new
+    @detail = current_user.details.new
   end
 
   def create

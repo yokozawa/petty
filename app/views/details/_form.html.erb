@@ -1,14 +1,11 @@
 <%= simple_form_for @detail, :html => { :class => 'form-horizontal' } do |f| %>
-  <%= f.input :user_id %>
+  <%= f.hidden_field :user_id, value: current_user.id %>
+  <%= f.input :record_at, as: :date %>
+  <%= f.input :sign, collection: [["+", false],["-", true]], checked: false, as: :radio_buttons, item_wrapper_class: "inline" %>
   <%= f.input :amount %>
+  <%= f.input :type_id, collection: current_user.types.map{ |type| [type.label, type.id] } %>
+  <%= f.input :outline_id, collection: current_user.outlines.map{ |type| [type.label, type.id] } %>
   <%= f.input :desc %>
-  <%= f.input :type_id %>
-  <%= f.input :outline_id %>
-  <%= f.input :deleted %>
-  <%= f.input :timestamps %>
-  <%= f.input :created_by %>
-  <%= f.input :record_at %>
-  <%= f.input :sign %>
   <div class="form-actions">
     <%= f.button :submit, :class => 'btn-primary' %>
     <%= link_to t('.cancel', :default => t("helpers.links.cancel")),

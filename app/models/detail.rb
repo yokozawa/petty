@@ -11,13 +11,13 @@ class Detail < ActiveRecord::Base
   def self.get_current_income(type_id)
     date = Date.today if !date
     from = date.beginning_of_month
-    where(:type_id => type_id, :sign => INCOME, record_at: from .. date).sum(:amount)
+    where(type_id: type_id, sign: INCOME, record_at: from .. date).sum(:amount)
   end
 
   def self.get_current_outgo(type_id)
     date = Date.today if !date
     from = date.beginning_of_month
-    where(:type_id => type_id, :sign => OUTGO, record_at: from .. date).sum(:amount)
+    where(type_id: type_id, sign: OUTGO, record_at: from .. date).sum(:amount)
   end
 
   def calc_card_amount
@@ -28,7 +28,7 @@ class Detail < ActiveRecord::Base
 
     rec = Detail.where("user_id = ? AND created_by = ? AND DATE_FORMAT(record_at, '%Y-%m-%d') = ?", self.user_id, type.id, payment_date).first_or_create do |d|
       d.user_id = self.user_id
-      d.type_id = 1
+      d.type_id = User.find(self.user_id).types.cash_id
       d.created_by = type.id
       d.record_at = payment_date
       d.sign = OUTGO
